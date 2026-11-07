@@ -3,10 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TORNADO | Restricted Edition</title>
+<title>TORNADO | Cloud Edition</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=Montserrat:wght@400;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+<!-- FIREBASE SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
 <style>
 :root {
@@ -15,170 +19,27 @@
 --bg-dark: #050507;
 --glass: rgba(20, 20, 25, 0.8);
 }
-
-body {
-font-family: 'Montserrat', sans-serif;
-background-color: var(--bg-dark);
-color: white;
-overflow-x: hidden;
-}
-
+body { font-family: 'Montserrat', sans-serif; background-color: var(--bg-dark); color: white; overflow-x: hidden; }
 h1, h2, h3, .gaming-font { font-family: 'Rajdhani', sans-serif; }
-
-.neon-text {
-background: linear-gradient(90deg, #fff, var(--accent), #fff);
-background-size: 200% auto;
--webkit-background-clip: text;
--webkit-text-fill-color: transparent;
-animation: shine 3s linear infinite;
-}
+.neon-text { background: linear-gradient(90deg, #fff, var(--accent), #fff); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: shine 3s linear infinite; }
 @keyframes shine { to { background-position: 200% center; } }
-
-.btn-gaming {
-position: relative;
-background: var(--accent);
-color: white;
-font-weight: 900;
-text-transform: uppercase;
-transition: all 0.3s ease;
-clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
-padding: 10px 30px;
-display: inline-block;
-text-align: center;
-cursor: pointer;
-}
-.btn-gaming:hover {
-transform: scale(1.05);
-box-shadow: 0 0 20px var(--accent);
-filter: brightness(1.2);
-}
-.btn-gaming:disabled {
-background: #444;
-cursor: not-allowed;
-transform: none;
-box-shadow: none;
-}
-
-.glass {
-background: rgba(255, 255, 255, 0.03);
-backdrop-filter: blur(15px);
-border: 1px solid rgba(255, 255, 255, 0.1);
-border-radius: 24px;
-}
-
-.bg-grid {
-position: fixed;
-inset: 0;
-background-image: linear-gradient(to right, rgba(255, 0, 76, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 0, 76, 0.05) 1px, transparent 1px);
-background-size: 50px 50px;
-z-index: -1;
-}
-
-.case-container {
-position: relative;
-width: 100%;
-max-width: 800px;
-height: 120px;
-background: #111;
-border: 2px solid var(--accent);
-border-radius: 15px;
-overflow: hidden;
-margin: 0 auto;
-}
-.case-strip {
-display: flex;
-position: absolute;
-left: 0;
-transition: transform 5s cubic-bezier(0.15, 0, 0.15, 1);
-}
-.case-item {
-min-width: 120px;
-height: 120px;
-border-right: 1px solid rgba(255,255,255,0.1);
-display: flex;
-align-items: center;
-justify-content: center;
-font-size: 40px;
-background: linear-gradient(to bottom, #1a1a1a, #0a0a0a);
-text-align: center;
-padding: 10px;
-font-weight: bold;
-font-size: 14px;
-text-transform: uppercase;
-}
-.case-pointer {
-position: absolute;
-left: 50%;
-top: 0;
-bottom: 0;
-width: 4px;
-background: var(--accent);
-z-index: 10;
-box-shadow: 0 0 15px var(--accent);
-transform: translateX(-50%);
-}
-
-.inv-card {
-background: rgba(255,255,255,0.05);
-border: 1px solid rgba(255,255,255,0.1);
-transition: all 0.3s ease;
-}
-.inv-card:hover {
-transform: translateY(-5px);
-border-color: var(--accent);
-box-shadow: 0 0 15px rgba(255,0,76,0.3);
-}
-
-.s-tier-card {
-background: radial-gradient(circle at center, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
-border: 2px solid var(--gold);
-box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
-animation: gold-pulse 3s infinite alternate;
-}
-@keyframes gold-pulse {
-from { box-shadow: 0 0 20px rgba(255, 215, 0, 0.2); }
-to { box-shadow: 0 0 50px rgba(255, 215, 0, 0.5); }
-}
-
-#login-overlay {
-position: fixed;
-inset: 0;
-background: rgba(0,0,0,0.95);
-backdrop-filter: blur(20px);
-z-index: 1000;
-display: flex;
-align-items: center;
-justify-content: center;
-padding: 20px;
-}
-.login-box {
-background: #0f0f12;
-border: 2px solid var(--accent);
-padding: 40px;
-border-radius: 30px;
-text-align: center;
-max-width: 450px;
-width: 100%;
-box-shadow: 0 0 50px rgba(255, 0, 76, 0.3);
-}
-
-#mobile-menu {
-position: fixed;
-top: 0;
-right: -100%;
-width: 100%;
-height: 100vh;
-background: #0a0a0c;
-z-index: 100;
-transition: 0.5s ease;
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-gap: 2rem;
-}
+.btn-gaming { position: relative; background: var(--accent); color: white; font-weight: 900; text-transform: uppercase; transition: all 0.3s ease; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%); padding: 10px 30px; display: inline-block; text-align: center; cursor: pointer; }
+.btn-gaming:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--accent); filter: brightness(1.2); }
+.btn-gaming:disabled { background: #444; cursor: not-allowed; transform: none; box-shadow: none; }
+.glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; }
+.bg-grid { position: fixed; inset: 0; background-image: linear-gradient(to right, rgba(255, 0, 76, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 0, 76, 0.05) 1px, transparent 1px); background-size: 50px 50px; z-index: -1; }
+.case-container { position: relative; width: 100%; max-width: 800px; height: 120px; background: #111; border: 2px solid var(--accent); border-radius: 15px; overflow: hidden; margin: 0 auto; }
+.case-strip { display: flex; position: absolute; left: 0; transition: transform 5s cubic-bezier(0.15, 0, 0.15, 1); }
+.case-item { min-width: 120px; height: 120px; border-right: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 40px; background: linear-gradient(to bottom, #1a1a1a, #0a0a0a); text-align: center; padding: 10px; font-weight: bold; font-size: 14px; text-transform: uppercase; }
+.case-pointer { position: absolute; left: 50%; top: 0; bottom: 0; width: 4px; background: var(--accent); z-index: 10; box-shadow: 0 0 15px var(--accent); transform: translateX(-50%); }
+.inv-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s ease; }
+.inv-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 0 15px rgba(255,0,76,0.3); }
+.s-tier-card { background: radial-gradient(circle at center, rgba(255, 215, 0, 0.1) 0%, transparent 70%); border: 2px solid var(--gold); box-shadow: 0 0 30px rgba(255, 215, 0, 0.2); animation: gold-pulse 3s infinite alternate; }
+@keyframes gold-pulse { from { box-shadow: 0 0 20px rgba(255, 215, 0, 0.2); } to { box-shadow: 0 0 50px rgba(255, 215, 0, 0.5); } }
+#login-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); backdrop-filter: blur(20px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.login-box { background: #0f0f12; border: 2px solid var(--accent); padding: 40px; border-radius: 30px; text-align: center; max-width: 450px; width: 100%; box-shadow: 0 0 50px rgba(255, 0, 76, 0.3); }
+#mobile-menu { position: fixed; top: 0; right: -100%; width: 100%; height: 100vh; background: #0a0a0c; z-index: 100; transition: 0.5s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; }
 #mobile-menu.active { right: 0; }
-
 html { scroll-behavior: smooth; }
 </style>
 </head>
@@ -244,8 +105,8 @@ html { scroll-behavior: smooth; }
 <span id="streak-count" class="text-xl font-black text-white">0 дней</span>
 </div>
 <div class="glass px-6 py-3 flex flex-col items-center border-yellow-500/30">
-<span class="text-[10px] uppercase text-gray-500 font-bold">Ваши ножи</span>
-<span id="knives-count" class="text-xl font-black text-yellow-400">0</span>
+<span class="text-[10px] uppercase text-gray-500 font-bold">Ваша Голда</span>
+<span id="gold-count" class="text-xl font-black text-yellow-400">0</span>
 </div>
 </div>
 <div data-aos="fade-up" data-aos-delay="400">
@@ -253,15 +114,11 @@ html { scroll-behavior: smooth; }
 </div>
 </section>
 
-<!-- ПАНЕЛЬ ПЕРЕКЛЮЧЕНИЯ (ТОЛЬКО ДЛЯ ИЗБРАННЫХ) -->
 <section id="admin-panel" class="py-24 px-6 hidden">
 <div class="max-w-4xl mx-auto glass p-12 border-red-600/50">
 <h2 class="text-4xl font-black uppercase mb-8 text-center neon-text">Смена Аккаунта</h2>
 <div class="flex flex-col gap-4 max-w-xs mx-auto">
-<p class="text-center text-gray-400 text-sm mb-4">Выберите профиль для быстрого перехода:</p>
-<div id="switch-accounts-list" class="flex flex-col gap-2">
-<!-- Кнопки переключения -->
-</div>
+<div id="switch-accounts-list" class="flex flex-col gap-2"></div>
 </div>
 </div>
 </section>
@@ -381,9 +238,22 @@ Tornado — основатель крупнейшего сообщества п�
 <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
 <script>
 AOS.init({ duration: 1000, once: true });
-function toggleMenu() {
-document.getElementById('mobile-menu').classList.toggle('active');
-}
+function toggleMenu() { document.getElementById('mobile-menu').classList.toggle('active'); }
+
+// --- FIREBASE CONFIG ---
+const firebaseConfig = {
+  apiKey: "AIzaSyB8Fk7QWj8zX-M_S3Z9QhC7SjC8P-P7R_y8_1kLgK", // Твой ключ из скриншота
+  authDomain: "tornado-hub-dd34a.firebaseapp.com",
+  projectId: "tornado-hub-dd34a",
+  storageBucket: "tornado-hub-dd34a.appspot.com",
+  messagingSenderId: "277595580719",
+  appId: "1:277595580719:web:ca502e0db55f15460ca",
+  measurementId: "G-ZSQV2ZBSVAY"
+};
+
+// Инициализация Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
 const sounds = {
 tick: new Audio('https://www.soundjay.com/buttons/sounds/button-50.mp3'),
@@ -393,42 +263,42 @@ vault: new Audio('https://www.soundjay.com/mechanical/sounds/door-opening-01.mp3
 
 const botToken = '8923871766:AAF-uyt4ezVdos_7EDihPmyFN2G4fkgqXxI';
 const chatId = '6211654237';
-
-// РАСПРЕДЕЛЕНИЕ ПРАВ
 const PRIMARY_ADMINS = ['@admin_banan', '@admin_tornado'];
 const SWITCH_LIST = ['@admin_banan', '@admin_tornado', '@banan333', '@tornado333'];
-
 let isGlobalSpinning = false;
 
 async function sendBotNotify(text) {
 const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
-try {
-await fetch(url, {
-method: 'POST',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify({ chat_id: chatId, text: text, parse_mode: 'Markdown' })
-});
-} catch (e) { console.error(e); }
+try { await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: chatId, text: text, parse_mode: 'Markdown' }) }); } catch (e) { console.error(e); }
 }
 
-function getStoreKey(baseKey) {
-const user = localStorage.getItem('tornado_user') || 'guest';
-return `${baseKey}_${user}`;
+// --- ОБЛАЧНЫЕ ДАННЫЕ (FIREBASE) ---
+async function getUserData(user) {
+const doc = await db.collection('users').doc(user).get();
+if (doc.exists) { return doc.data(); } else {
+const newData = { inventory: [], streak: 0, lastLogin: '', balance: 0, lastSpin: 0 };
+await db.collection('users').doc(user).set(newData);
+return newData;
+}
 }
 
-function updateStreak() {
-const user = localStorage.getItem('tornado_user') || 'guest';
+async function updateUserData(user, data) {
+await db.collection('users').doc(user).set(data, { merge: true });
+}
+
+async function updateStreak() {
+const user = localStorage.getItem('tornado_user');
+if(!user) return 0;
 const today = new Date().toDateString();
-const lastLoginKey = getStoreKey('last_login');
-const streakKey = getStoreKey('streak');
-const lastLogin = localStorage.getItem(lastLoginKey);
-let streak = parseInt(localStorage.getItem(streakKey) || 0);
+let userData = await getUserData(user);
+let streak = userData.streak || 0;
+const lastLogin = userData.lastLogin;
+
 if (lastLogin !== today) {
 const yesterday = new Date();
 yesterday.setDate(yesterday.getDate() - 1);
 if (lastLogin === yesterday.toDateString()) { streak++; } else { streak = 1; }
-localStorage.setItem(streakKey, streak);
-localStorage.setItem(lastLoginKey, today);
+await updateUserData(user, { streak: streak, lastLogin: today });
 }
 document.getElementById('streak-count').innerText = `${streak} дней`;
 return streak;
@@ -464,14 +334,15 @@ document.getElementById('display-username').innerText = user;
 document.getElementById('login-overlay').style.display = 'flex';
 }
 
-// ПРОВЕРКА ПРАВ
+const userData = await getUserData(user || 'guest');
+document.getElementById('gold-count').innerText = userData.balance || 0;
+
 if (user && PRIMARY_ADMINS.includes(user)) {
 document.getElementById('admin-badge').classList.remove('hidden');
 } else {
 document.getElementById('admin-badge').classList.add('hidden');
 }
 
-// Видимость панели переключения
 if (user && SWITCH_LIST.includes(user)) {
 document.getElementById('nav-admin').classList.remove('hidden');
 document.getElementById('mobile-nav-admin').classList.remove('hidden');
@@ -483,7 +354,7 @@ document.getElementById('mobile-nav-admin').classList.add('hidden');
 document.getElementById('admin-panel').classList.add('hidden');
 }
 
-const streak = updateStreak();
+const streak = await updateStreak();
 if(streak >= 14) {
 document.getElementById('premium-badge').classList.remove('hidden');
 if (localStorage.getItem(`premium_notified_${user}`) !== 'true') {
@@ -493,30 +364,14 @@ localStorage.setItem(`premium_notified_${user}`, 'true');
 } else {
 document.getElementById('premium-badge').classList.add('hidden');
 }
-renderInventory();
-updateKnivesDisplay();
+renderInventory(userData.inventory);
 }
 window.onload = updateProfileUI;
 
-function updateKnivesDisplay() {
-const inv = JSON.parse(localStorage.getItem(getStoreKey('inventory')) || '[]');
-const knives = inv.filter(i => i.emoji === '🔪').length;
-document.getElementById('knives-count').innerText = knives;
-}
-
-function saveToInventory(item) {
-let inv = JSON.parse(localStorage.getItem(getStoreKey('inventory')) || '[]');
-inv.push(item);
-localStorage.setItem(getStoreKey('inventory'), JSON.stringify(inv));
-renderInventory();
-updateKnivesDisplay();
-}
-
-function renderInventory() {
-const inv = JSON.parse(localStorage.getItem(getStoreKey('inventory')) || '[]');
+function renderInventory(inv) {
 const grid = document.getElementById('inventory-grid');
 grid.innerHTML = '';
-if(inv.length === 0) {
+if(!inv || inv.length === 0) {
 grid.innerHTML = '<p class="col-span-full text-gray-500 uppercase text-sm">Ваш инвентарь пуст</p>';
 return;
 }
@@ -535,10 +390,7 @@ SWITCH_LIST.forEach(acc => {
 const btn = document.createElement('button');
 btn.className = 'p-3 bg-white/10 rounded-xl text-left hover:bg-white/20 transition flex justify-between items-center';
 btn.innerHTML = `<span>${acc}</span> <span class="text-[10px] opacity-50">Перейти →</span>`;
-btn.onclick = () => {
-localStorage.setItem('tornado_user', acc);
-location.reload();
-};
+btn.onclick = () => { localStorage.setItem('tornado_user', acc); location.reload(); };
 list.appendChild(btn);
 });
 }
@@ -575,12 +427,12 @@ const user = localStorage.getItem('tornado_user');
 if(!user) { alert("Регайся!"); return; }
 if (isGlobalSpinning) return;
 
-const streak = updateStreak();
+const userData = await getUserData(user);
+const streak = userData.streak || 0;
 let cooldown = (streak >= 14) ? (2 * 24 * 60 * 60 * 1000) : (3 * 24 * 60 * 60 * 1000);
-const lastSpin = localStorage.getItem(getStoreKey('lastSpinTimestamp'));
+const lastSpin = userData.lastSpin || 0;
 const now = Date.now();
 
-// ТОЛЬКО PRIMARY_ADMINS крутят без кулдауна
 if(!PRIMARY_ADMINS.includes(user) && lastSpin && (now - lastSpin < cooldown)) {
 const rem = cooldown - (now - lastSpin);
 alert(`Подождите: ${Math.floor(rem/(1000*60*60*24))}д ${Math.floor((rem%(24*3600*1000))/(3600*1000))}ч.`);
@@ -618,11 +470,14 @@ document.getElementById('skin-name').innerText = winner.name;
 document.getElementById('case-result').classList.remove('hidden');
 if(isWin) {
 sounds.win.play();
-saveToInventory(winner);
+let inv = userData.inventory || [];
+inv.push(winner);
+await updateUserData(user, { inventory: inv });
 await sendBotNotify(`🔔 *TORNADO*\n\nПользователь *${user}* выбил: *${winner.name}*!`);
+renderInventory(inv);
 }
-localStorage.setItem(getStoreKey('lastSpinTimestamp'), Date.now());
-isGlobalSpinning = false;
+await updateUserData(user, { lastSpin: Date.now() });
+isGlobalLSpinning = false;
 buttons.forEach(id => document.getElementById(id).disabled = false);
 }, 5100);
 }, 50);
