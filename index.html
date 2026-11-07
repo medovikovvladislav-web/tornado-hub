@@ -411,7 +411,6 @@ list.appendChild(btn);
 });
 }
 
-// ФУНКЦИЯ ПОКУПКИ
 async function openTopUp(amount) {
 const user = localStorage.getItem('tornado_user');
 if(!user) { alert("Сначала зарегистрируйся!"); return; }
@@ -425,11 +424,10 @@ alert(`🚀 АДМИН-БОНУС!\n\nВам зачислено ${amount} гол
 return;
 }
 
-const botUsername = 'TornadoGoldBot'; // ТВОЙ БОТ
+const botUsername = 'TornadoFadeBot'; // ИСПРАВЛЕНО
 window.location.href = `https://t.me/${botUsername}?start=buy_${amount}_${user.substring(1)}`;
 }
 
-// ФУНКЦИЯ ПРИЕМА ОПЛАТЫ
 function checkPaymentFromUrl() {
 const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.has('payment') && urlParams.get('payment') === 'success') {
@@ -544,7 +542,6 @@ alert("Неверный код!");
 }
 }
 
-// ГЛАВНЫЙ ЗАПУСК
 window.onload = () => {
 checkPaymentFromUrl(); 
 updateProfileUI();
