@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TORNADO | Cloud Edition</title>
+<title>TORNADO | Cloud Final Edition</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=Montserrat:wght@400;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
@@ -240,21 +240,6 @@ Tornado — основатель крупнейшего сообщества п�
 AOS.init({ duration: 1000, once: true });
 function toggleMenu() { document.getElementById('mobile-menu').classList.toggle('active'); }
 
-// --- FIREBASE CONFIG ---
-const firebaseConfig = {
-  apiKey: "AIzaSyB8Fk7QWj8zX-M_S3Z9QhC7SjC8P-P7R_y8_1kLgK", // Твой ключ из скриншота
-  authDomain: "tornado-hub-dd34a.firebaseapp.com",
-  projectId: "tornado-hub-dd34a",
-  storageBucket: "tornado-hub-dd34a.appspot.com",
-  messagingSenderId: "277595580719",
-  appId: "1:277595580719:web:ca502e0db55f15460ca",
-  measurementId: "G-ZSQV2ZBSVAY"
-};
-
-// Инициализация Firebase
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
 const sounds = {
 tick: new Audio('https://www.soundjay.com/buttons/sounds/button-50.mp3'),
 win: new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3'),
@@ -272,33 +257,25 @@ const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
 try { await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: chatId, text: text, parse_mode: 'Markdown' }) }); } catch (e) { console.error(e); }
 }
 
-// --- ОБЛАЧНЫЕ ДАННЫЕ (FIREBASE) ---
-async function getUserData(user) {
-const doc = await db.collection('users').doc(user).get();
-if (doc.exists) { return doc.data(); } else {
-const newData = { inventory: [], streak: 0, lastLogin: '', balance: 0, lastSpin: 0 };
-await db.collection('users').doc(user).set(newData);
-return newData;
-}
-}
-
-async function updateUserData(user, data) {
-await db.collection('users').doc(user).set(data, { merge: true });
+function getStoreKey(baseKey) {
+const user = localStorage.getItem('tornado_user') || 'guest';
+return `${baseKey}_${user}`;
 }
 
 async function updateStreak() {
 const user = localStorage.getItem('tornado_user');
 if(!user) return 0;
 const today = new Date().toDateString();
-let userData = await getUserData(user);
-let streak = userData.streak || 0;
-const lastLogin = userData.lastLogin;
-
+const lastLoginKey = getStoreKey('last_login');
+const streakKey = getStoreKey('streak');
+const lastLogin = localStorage.getItem(lastLoginKey);
+let streak = parseInt(localStorage.getItem(streakKey) || 0);
 if (lastLogin !== today) {
 const yesterday = new Date();
 yesterday.setDate(yesterday.getDate() - 1);
 if (lastLogin === yesterday.toDateString()) { streak++; } else { streak = 1; }
-await updateUserData(user, { streak: streak, lastLogin: today });
+localStorage.setItem(streakKey, streak);
+localStorage.setItem(lastLoginKey, today);
 }
 document.getElementById('streak-count').innerText = `${streak} дней`;
 return streak;
@@ -315,7 +292,7 @@ updateProfileUI();
 }
 
 async function logout() {
-const user = localStorage.getItem('tornado_user');
+const user = localStorage.getItem('tornado_//user');
 if(confirm("Удалить текущий профиль?")) {
 if(user) await sendBotNotify(`🗑️ *АККАУНТ УДАЛЕН*\n\nПользователь *${user}* удалил профиль.`);
 localStorage.removeItem('tornado_user');
@@ -333,9 +310,6 @@ document.getElementById('display-username').innerText = user;
 } else {
 document.getElementById('login-overlay').style.display = 'flex';
 }
-
-const userData = await getUserData(user || 'guest');
-document.getElementById('gold-count').innerText = userData.balance || 0;
 
 if (user && PRIMARY_ADMINS.includes(user)) {
 document.getElementById('admin-badge').classList.remove('hidden');
@@ -364,11 +338,27 @@ localStorage.setItem(`premium_notified_${user}`, 'true');
 } else {
 document.getElementById('premium-badge').classList.add('hidden');
 }
-renderInventory(userData.inventory);
+renderInventory();
+updateKnivesDisplay();
 }
 window.onload = updateProfileUI;
 
-function renderInventory(inv) {
+function updateKnivesDisplay() {
+const inv = JSON.parse(localStorage.getItem(getStoreKey('inventory')) || '[]');
+const knives = inv.filter(i => i.emoji === '🔪').length;
+document.getElementById('knives-count').innerText = knives;
+}
+
+function saveToInventory(item) {
+let inv = JSON.parse(localStorage.getItem(getStoreKey('inventory')) || '[]');
+inv.push(item);
+localStorage.setItem(getStoreKey('inventory'), JSON.stringify(inv));
+renderInventory();
+updateKnivesDisplay();
+}
+
+function renderInventory() {
+const inv = JSON.parse(localStorage.getItem(getStoreKey('inventory')) || '[]');
 const grid = document.getElementById('inventory-grid');
 grid.innerHTML = '';
 if(!inv || inv.length === 0) {
@@ -427,10 +417,9 @@ const user = localStorage.getItem('tornado_user');
 if(!user) { alert("Регайся!"); return; }
 if (isGlobalSpinning) return;
 
-const userData = await getUserData(user);
-const streak = userData.streak || 0;
+const streak = await updateStreak();
 let cooldown = (streak >= 14) ? (2 * 24 * 60 * 60 * 1000) : (3 * 24 * 60 * 60 * 1000);
-const lastSpin = userData.lastSpin || 0;
+const lastSpin = localStorage.getItem(getStoreKey('lastSpinTimestamp'));
 const now = Date.now();
 
 if(!PRIMARY_ADMINS.includes(user) && lastSpin && (now - lastSpin < cooldown)) {
@@ -470,14 +459,11 @@ document.getElementById('skin-name').innerText = winner.name;
 document.getElementById('case-result').classList.remove('hidden');
 if(isWin) {
 sounds.win.play();
-let inv = userData.inventory || [];
-inv.push(winner);
-await updateUserData(user, { inventory: inv });
+saveToInventory(winner);
 await sendBotNotify(`🔔 *TORNADO*\n\nПользователь *${user}* выбил: *${winner.name}*!`);
-renderInventory(inv);
 }
-await updateUserData(user, { lastSpin: Date.now() });
-isGlobalLSpinning = false;
+localStorage.setItem(getStoreKey('lastSpinTimestamp'), Date.now());
+isGlobalSpinning = false;
 buttons.forEach(id => document.getElementById(id).disabled = false);
 }, 5100);
 }, 50);
@@ -485,7 +471,7 @@ buttons.forEach(id => document.getElementById(id).disabled = false);
 
 function unlockVault() {
 const pass = document.getElementById('vault-pass').value.toLowerCase();
-if(pass === 'колпак005') {
+if(pass === 'банановыйторнадо') {
 sounds.vault.play();
 document.getElementById('vault-msg').innerHTML = "✅ ДОСТУП РАЗРЕШЕН!";
 setTimeout(() => {
