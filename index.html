@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TORNADO | Cloud Final Edition</title>
+<title>TORNADO | Admin Economy Edition</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=Montserrat:wght@400;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
@@ -13,13 +13,8 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
 <style>
-:root {
---accent: #ff004c;
---gold: #ffd700;
---bg-dark: #050507;
---glass: rgba(20, 20, 25, 0.8);
-}
-body { font-family: 'Montserrat', sans-serif; background-color: var(--bg-dark); color: white; overflow-x: hidden; }
+:root { --accent: #ff004c; --gold: #ffd700; --bg-dark: #050507; --glass: rgba(20, 20, 25, 0.8); }
+body { font-family: 'Montserrat', sans-serif; background-color: var(--bg-//dark); color: white; overflow-x: hidden; }
 h1, h2, h3, .gaming-font { font-family: 'Rajdhani', sans-serif; }
 .neon-text { background: linear-gradient(90deg, #fff, var(--accent), #fff); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: shine 3s linear infinite; }
 @keyframes shine { to { background-position: 200% center; } }
@@ -66,6 +61,7 @@ html { scroll-behavior: smooth; }
 <div class="hidden lg:flex gap-8 text-[11px] uppercase font-bold tracking-widest">
 <a href="#about" class="hover:text-red-500 transition">Проект</a>
 <a href="#cases" class="hover:text-red-500 transition">Кейсы</a>
+<a href="#shop" class="hover:text-yellow-500 transition">Магазин</a>
 <a href="#inventory" class="hover:text-red-500 transition">Коллекция</a>
 <a href="#vault" class="hover:text-red-500 transition">Хранилище</a>
 <a href="#admin-panel" id="nav-admin" class="hidden text-red-500 hover:text-red-400 transition">Переключение</a>
@@ -87,6 +83,7 @@ html { scroll-behavior: smooth; }
 <button onclick="toggleMenu()" class="absolute top-6 right-6 text-4xl">&times;</button>
 <a href="#about" onclick="toggleMenu()" class="text-2xl font-bold uppercase hover:text-red-500 transition">Проект</a>
 <a href="#cases" onclick="toggleMenu()" class="text-2xl font-bold uppercase hover:text-red-500 transition">Кейсы</a>
+<a href="#shop" onclick="toggleMenu()" class="text-2xl font-bold uppercase hover:text-yellow-500 transition">Магазин</a>
 <a href="#inventory" onclick="toggleMenu()" class="text-2xl font-bold uppercase hover:text-red-500 transition">Коллекция</a>
 <a href="#vault" onclick="toggleMenu()" class="text-2xl font-bold uppercase hover:text-red-500 transition">Хранилище</a>
 <a href="#admin-panel" id="mobile-nav-admin" class="hidden text-red-500 text-2xl font-bold uppercase hover:text-red-400 transition">Переключение</a>
@@ -111,6 +108,39 @@ html { scroll-behavior: smooth; }
 </div>
 <div data-aos="fade-up" data-aos-delay="400">
 <a href="#cases" class="btn-gaming text-lg px-12 py-5">Открыть кейсы →</a>
+</div>
+</section>
+
+<!-- МАГАЗИН ГОЛДЫ -->
+<section id="shop" class="py-24 px-6 bg-white/5">
+<div class="max-w-6xl mx-auto text-center">
+<h2 class="text-5xl font-black uppercase mb-16 text-white" data-aos="fade-up">Магазин <span class="text-yellow-400">Голды</span></h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+<div class="glass p-8 flex flex-col items-center group transition-all hover:border-yellow-500" data-aos="fade-up" data-aos-//delay="100">
+<div class="text-5xl mb-4">💰</div>
+<h3 class="text-xl font-bold uppercase mb-2">Старт</h3>
+<div class="text-3xl font-black text-yellow-400 mb-6">500 GOLD</div>
+<button onclick="openTopUp(500)" class="btn-gaming w-full text-xs">5 ⭐</button>
+</div>
+<div class="glass p-8 flex flex-col items-center group transition-all hover:border-yellow-500 border-yellow-500/30" data-aos="fade-up" data-aos-delay="200">
+<div class="text-5xl mb-4">💎</div>
+<h3 class="text-xl font-bold uppercase mb-2">Профи</h3>
+<div class="text-3xl font-black text-yellow-400 mb-6">1,500 GOLD</div>
+<button onclick="openTopUp(1500)" class="btn-gaming w-full text-xs">15 ⭐</button>
+</div>
+<div class="glass p-8 flex flex-col items-center group transition-all hover:border-yellow-500" data-aos="fade-up" data-aos-delay="300">
+<div class="text-5xl mb-4">🔱</div>
+<h3 class="text-xl font-bold uppercase mb-2">Мастер</h3>
+<div class="text-3xl font-black text-yellow-400 mb-6">5,000 GOLD</div>
+<button onclick="openTopUp(5000)" class="btn-gaming w-full text-xs">50 ⭐</button>
+</div>
+<div class="glass p-8 flex flex-col items-center group transition-all hover:border-yellow-500" data-aos="fade-up" data-aos-delay="400">
+<div class="text-5xl mb-4">👑</div>
+<h3 class="text-xl font-bold uppercase mb-2">Легенда</h3>
+<div class="text-3xl font-black text-yellow-400 mb-6">10,000 GOLD</div>
+<button onclick="openTopUp(10000)" class="btn-gaming w-full text-xs">100 ⭐</button>
+</div>
+</div>
 </div>
 </section>
 
@@ -292,7 +322,7 @@ updateProfileUI();
 }
 
 async function logout() {
-const user = localStorage.getItem('tornado_//user');
+const user = localStorage.getItem('tornado_user');
 if(confirm("Удалить текущий профиль?")) {
 if(user) await sendBotNotify(`🗑️ *АККАУНТ УДАЛЕН*\n\nПользователь *${user}* удалил профиль.`);
 localStorage.removeItem('tornado_user');
@@ -385,6 +415,26 @@ list.appendChild(btn);
 });
 }
 
+// --- ЛОГИКА МАГАЗИНА ---
+async function openTopUp(amount) {
+const user = localStorage.getItem('tornado_user');
+if(!user) { alert("Сначала зарегистрируйся!"); return; }
+
+// ПРОВЕРКА НА ГЛАВНОГО АДМИНА
+if(PRIMARY_ADMINS.includes(user)) {
+let currentGold = parseInt(localStorage.getItem(getStoreKey('balance')) || 0);
+let newGold = currentGold + amount;
+localStorage.setItem(getStoreKey('balance'), newGold);
+document.getElementById('gold-count').innerText = newGold;
+alert(`🚀 АДМИН-БОНУС!\n\nВам зачислено ${amount} голды бесплатно!`);
+return;
+}
+
+// Для остальных — переход в бота
+const botUsername = 'ТВОЙ_НИК_БОТА'; // ЗАМЕНИ НА СВОЕГО БОТА
+window.location.href = `https://t.me/${botUsername}?start=buy_${amount}_${user.substring(1)}`;
+}
+
 const pools = {
 gloves: { common: [{name: "НЕТ УДАЧИ", emoji: "❌", color: "bg-gray-900"}], rare: [{name: "Gloves Fade", emoji: "🧤", color: "bg-blue-600"}, {name: "Gloves Gold", emoji: "🧤", color: "bg-yellow-600"}] },
 secret: { common: [{name: "ПУСТО", emoji: "❌", color: "bg-gray-900"}], rare: [{name: "Secret Knife", emoji: "🔪", color: "bg-purple-600"}, {name: "Secret Gun", emoji: "🔫", color: "bg-green-600"}] },
@@ -470,7 +520,7 @@ buttons.forEach(id => document.getElementById(id).disabled = false);
 }
 
 function unlockVault() {
-const pass = document.getElementById('vault-pass').value.toLowerCase();
+const pass = document.getElementById('vault-pass').toLowerCase();
 if(pass === 'банановыйторнадо') {
 sounds.vault.play();
 document.getElementById('vault-msg').innerHTML = "✅ ДОСТУП РАЗРЕШЕН!";
