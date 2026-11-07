@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TORNADO | Restricted Edition</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=Montserrat:wght@400;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+<style>
+:root {
+--accent: #ff004c;
+--gold: #ffd700;
+--bg-dark: #050507;
+--glass: rgba(20, 20, 25, 0.8);
+}
+
+body {
+font-family: 'Montserrat', sans-serif;
+background-color: var(--bg-dark);
+color: white;
+overflow-x: hidden;
+}
+
+h1, h2, h3, .gaming-font { font-family: 'Rajdhani', sans-serif; }
+
+.neon-text {
+background: linear-gradient(90deg, #fff, var(--accent), #fff);
+background-size: 200% auto;
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+animation: shine 3s linear infinite;
+}
+@keyframes shine { to { background-position: 200% center; } }
+
+.btn-gaming {
+position: relative;
+background: var(--accent);
+color: white;
+font-weight: 900;
+text-transform: uppercase;
+transition: all 0.3s ease;
+clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+padding: 10px 30px;
+display: inline-block;
+text-align: center;
+cursor: pointer;
+}
+.btn-gaming:hover {
+transform: scale(1.05);
+box-shadow: 0 0 20px var(--accent);
+filter: brightness(1.2);
+}
+.btn-gaming:disabled {
+background: #444;
+cursor: not-allowed;
+transform: none;
+box-shadow: none;
+}
+
+.glass {
+background: rgba(255, 255, 255, 0.03);
+backdrop-filter: blur(15px);
+border: 1px solid rgba(255, 255, 255, 0.1);
+border-radius: 24px;
+}
+
+.bg-grid {
+position: fixed;
+inset: 0;
+background-image: linear-gradient(to right, rgba(255, 0, 76, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 0, 76, 0.05) 1px, transparent 1px);
+background-size: 50px 50px;
+z-index: -1;
+}
+
+.case-container {
+position: relative;
+width: 100%;
+max-width: 800px;
+height: 120px;
+background: #111;
+border: 2px solid var(--accent);
+border-radius: 15px;
+overflow: hidden;
+margin: 0 auto;
+}
+.case-strip {
+display: flex;
+position: absolute;
+left: 0;
+transition: transform 5s cubic-bezier(0.15, 0, 0.15, 1);
+}
+.case-item {
+min-width: 120px;
+height: 120px;
+border-right: 1px solid rgba(255,255,255,0.1);
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 40px;
+background: linear-gradient(to bottom, #1a1a1a, #0a0a0a);
+text-align: center;
+padding: 10px;
+font-weight: bold;
+font-size: 14px;
+text-transform: uppercase;
+}
+.case-pointer {
+position: absolute;
+left: 50%;
+top: 0;
+bottom: 0;
+width: 4px;
+background: var(--accent);
+z-index: 10;
+box-shadow: 0 0 15px var(--accent);
+transform: translateX(-50%);
+}
+
+.inv-card {
+background: rgba(255,255,255,0.05);
+border: 1px solid rgba(255,255,255,0.1);
+transition: all 0.3s ease;
+}
+.inv-card:hover {
+transform: translateY(-5px);
+border-color: var(--accent);
+box-shadow: 0 0 15px rgba(255,0,76,0.3);
+}
+
+.s-tier-card {
+background: radial-gradient(circle at center, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+border: 2px solid var(--gold);
+box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
+animation: gold-pulse 3s infinite alternate;
+}
+@keyframes gold-pulse {
+from { box-shadow: 0 0 20px rgba(255, 215, 0, 0.2); }
+to { box-shadow: 0 0 50px rgba(255, 215, 0, 0.5); }
+}
+
+#login-overlay {
+position: fixed;
+inset: 0;
+background: rgba(0,0,0,0.95);
+backdrop-filter: blur(20px);
+z-index: 1000;
+display: flex;
+align-items: center;
+justify-content: center;
+padding: 20px;
+}
+.login-box {
+background: #0f0f12;
+border: 2px solid var(--accent);
+padding: 40px;
+border-radius: 30px;
+text-align: center;
+max-width: 450px;
+width: 100%;
+box-shadow: 0 0 50px rgba(255, 0, 76, 0.3);
+}
+
+#mobile-menu {
+position: fixed;
+top: 0;
+right: -100%;
+width: 100%;
+height: 100vh;
+background: #0a0a0c;
+z-index: 100;
+transition: 0.5s ease;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+gap: 2rem;
+}
+#mobile-menu.active { right: 0; }
+
+html { scroll-behavior: smooth; }
+</style>
+</head>
+<body class="relative">
+
+<div class="bg-grid"></div>
+
+<!-- ОКНО РЕГИСТРАЦИИ -->
+<div id="login-overlay">
+<div class="login-box" data-aos="zoom-in">
+<div class="text-6xl mb-6">🛡️</div>
+<h2 class="text-3xl font-black uppercase mb-4 neon-text">Вход в Систему</h2>
+<p class="text-gray-400 mb-8 text-sm">Добро пожаловать в TORNADO HUB. <br>Введите ваш Telegram юзернейм для доступа.</p>
+<div class="flex flex-col gap-4">
+<input type="text" id="user-tg" placeholder="@username" class="w-full p-4 bg-black border border-white/20 rounded-xl text-center outline-none focus:border-red-600 transition text-white">
+<button onclick="handleLogin()" id="login-btn" class="btn-gaming w-full">Создать профиль</button>
+</div>
+<p class="text-[10px] text-gray-600 mt-6 uppercase">Регистрируясь, вы соглашаетесь с правилами сервера</p>
+</div>
+</div>
+
+<nav class="fixed top-0 w-full z-50 px-6 py-4 flex justify-between items-center backdrop-blur-md border-b border-white/5">
+<div class="text-2xl font-black tracking-tighter text-white uppercase">TORNADO <span class="text-red-600">HUB</span></div>
+<div class="hidden lg:flex gap-8 text-[11px] uppercase font-bold tracking-widest">
+<a href="#about" class="hover:text-red-500 transition">Проект</a>
+<a href="#cases" class="hover:text-red-500 transition">Кейсы</a>
+<a href="#inventory" class="hover:text-red-500 transition">Коллекция</a>
+<a href="#vault" class="hover:text-red-500 transition">Хранилище</a>
+<a href="#admin-panel" id="nav-admin" class="hidden text-red-500 hover:text-red-400 transition">Переключение</a>
+</div>
+<div class="flex items-center gap-4">
+<div id="user-profile" class="hidden items-center gap-2 bg-white/5 px-3 py-1 rounded-full border border-white/10 text-[10px] font-bold uppercase">
+<span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+<span id="display-username">@user</span>
+<span id="admin-badge" class="hidden bg-red-600 text-white px-1.5 rounded-sm text-[8px] font-black border border-white/20">ADMIN</span>
+<span id="premium-badge" class="hidden bg-yellow-500 text-black px-1.5 rounded-sm text-[8px] font-black">⭐ PREMIUM</span>
+<button onclick="logout()" class="ml-2 text-gray-500 hover:text-white transition">✕</button>
+</div>
+<a href="https://t.me/tornado005" target="_blank" class="btn-gaming text-xs">Вступить в ТГ</a>
+<button onclick="toggleMenu()" class="lg:hidden text-white"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg></button>
+</div>
+</nav>
+
+<div id="mobile-menu">
+<button onclick="toggleMenu()" class="absolute top-6 right-6 text-4xl">&times;</button>
+<a href="#about" onclick="toggleMenu()" class="text-2xl font-bold uppercase hover:text-red-500 transition">Проект</a>
+<a href="#cases" onclick="toggleMenu()" class="text-2xl font-bold uppercase hover:text-red-500 transition">Кейсы</a>
+<a href="#inventory" onclick="toggleMenu()" class="text-2xl font-bold uppercase hover:text-red-500 transition">Коллекция</a>
+<a href="#vault" onclick="toggleMenu()" class="text-2xl font-bold uppercase hover:text-red-500 transition">Хранилище</a>
+<a href="#admin-panel" id="mobile-nav-admin" class="hidden text-red-500 text-2xl font-bold uppercase hover:text-red-400 transition">Переключение</a>
+</div>
+
+<section class="h-screen flex flex-col items-center justify-center text-center px-4 relative">
+<h1 class="text-[12vw] leading-none font-black uppercase tracking-tighter mb-6" data-aos="zoom-in">
+<span class="neon-text">TORNADO</span>
+</h1>
+<p class="text-lg md:text-2xl text-gray-400 max-w-2xl mb-6 font-light" data-aos="fade-up" data-aos-delay="200">
+Эксклюзивный проект по Standoff 2. <br>Приватный сервер, топовые скины и мощное комьюнити.
+</p>
+<div class="flex gap-4 mb-10" data-aos="fade-up" data-aos-delay="300">
+<div class="glass px-6 py-3 flex flex-col items-center border-blue-500/30">
+<span class="text-[10px] uppercase text-gray-500 font-bold">Стрик входа</span>
+<span id="streak-count" class="text-xl font-black text-white">0 дней</span>
+</div>
+<div class="glass px-6 py-3 flex flex-col items-center border-yellow-500/30">
+<span class="text-[10px] uppercase text-gray-500 font-bold">Ваши ножи</span>
+<span id="knives-count" class="text-xl font-black text-yellow-400">0</span>
+</div>
+</div>
+<div data-aos="fade-up" data-aos-delay="400">
+<a href="#cases" class="btn-gaming text-lg px-12 py-5">Открыть кейсы →</a>
+</div>
+</section>
+
+<!-- ПАНЕЛЬ ПЕРЕКЛЮЧЕНИЯ (ТОЛЬКО ДЛЯ ИЗБРАННЫХ) -->
+<section id="admin-panel" class="py-24 px-6 hidden">
+<div class="max-w-4xl mx-auto glass p-12 border-red-600/50">
+<h2 class="text-4xl font-black uppercase mb-8 text-center neon-text">Смена Аккаунта</h2>
+<div class="flex flex-col gap-4 max-w-xs mx-auto">
+<p class="text-center text-gray-400 text-sm mb-4">Выберите профиль для быстрого перехода:</p>
+<div id="switch-accounts-list" class="flex flex-col gap-2">
+<!-- Кнопки переключения -->
+</div>
+</div>
+</div>
+</section>
+
+<section id="about" class="py-24 px-6 max-w-6xl mx-auto">
+<div class="grid md:grid-cols-2 gap-12 items-center">
+<div data-aos="fade-right">
+<h2 class="text-5xl font-black uppercase mb-6 text-white">Кто такой <span class="text-red-600">Tornado?</span></h2>
+<p class="text-gray-400 text-lg leading-relaxed mb-6">
+Tornado — основатель крупнейшего сообщества по приватным серверам Standoff 2. Он создал среду, где качество игры и эксклюзивность стоят на первом месте.
+</p>
+<div class="bg-black/40 border border-red-600/30 p-6 rounded-2xl relative overflow-hidden group transition-all hover:border-red-600">
+<div class="absolute top-0 right-0 p-2 bg-red-600 text-[10px] font-bold uppercase">S-Tier Access</div>
+<h4 class="text-xl font-bold mb-3 uppercase">Доступ к серверу</h4>
+<p class="text-gray-400 text-sm mb-6">Ссылка доступна только после подписки в ТГ Торнадо.</p>
+<a href="https://t.me/tornado005" target="_blank" class="btn-gaming inline-block w-full text-sm py-3">Проверить подписку →</a>
+</div>
+</div>
+<div class="relative" data-aos="fade-left">
+<div class="absolute -inset-4 bg-gradient-to-tr from-red-600 to-purple-600 rounded-3xl blur-2xl opacity-30"></div>
+<div class="relative glass p-4">
+<img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80" alt="Gaming" class="rounded-2xl shadow-2xl">
+</div>
+</div>
+</div>
+</section>
+
+<section id="cases" class="py-24 px-6 bg-white/5">
+<div class="max-w-6xl mx-auto text-center">
+<h2 class="text-5xl font-black uppercase mb-16 text-white" data-aos="fade-up">Выбери <span class="text-red-600">Кейс</span></h2>
+<div class="grid md:grid-cols-3 gap-12">
+<div class="flex flex-col items-center" data-aos="fade-up" data-aos-delay="100">
+<div class="text-6xl mb-4">🧤</div>
+<h3 class="text-2xl font-bold uppercase mb-4">Перчаточный</h3>
+<div class="case-container mb-6">
+<div class="case-pointer"></div>
+<div class="case-strip" id="strip-gloves"></div>
+</div>
+<button onclick="startSpinning('gloves')" id="btn-gloves" class="btn-gaming w-full max-w-xs">Открыть</button>
+</div>
+<div class="flex flex-col items-center" data-aos="fade-up" data-aos-delay="200">
+<div class="text-6xl mb-4">㊙️</div>
+<h3 class="text-2xl font-bold uppercase mb-4">Тайный</h3>
+<div class="case-container mb-6">
+<div class="case-pointer"></div>
+<div class="case-strip" id="strip-secret"></div>
+</div>
+<button onclick="startSpinning('secret')" id="btn-secret" class="btn-gaming w-full max-w-xs">Открыть</button>
+</div>
+<div class="flex flex-col items-center" data-aos="fade-up" data-aos-delay="300">
+<div class="text-6xl mb-4">🔪</div>
+<h3 class="text-2xl font-bold uppercase mb-4">Ножевой</h3>
+<div class="case-container mb-6">
+<div class="case-pointer"></div>
+<div class="case-strip" id="strip-knives"></div>
+</div>
+<button onclick="startSpinning('knives')" id="btn-knives" class="btn-gaming w-full max-w-xs">Открыть</button>
+</div>
+</div>
+<div id="case-result" class="mt-12 text-3xl font-bold uppercase text-yellow-400 hidden">Вы выбили: <span id="skin-name">...</span>!</div>
+<div id="timer-text" class="mt-4 text-gray-500 text-sm uppercase">Кулдаун общий для всех кейсов</div>
+</div>
+</section>
+
+<section id="inventory" class="py-24 px-6 text-center">
+<h2 class="text-5xl font-black uppercase mb-16 text-white" data-aos="fade-up">Моя <span class="text-red-600">Коллекция</span></h2>
+<div id="inventory-grid" class="grid grid-cols-2 md:grid-cols-5 gap-6 max-w-6xl mx-auto" data-aos="fade-up"></div>
+</section>
+
+<section id="vault" class="py-24 px-6 text-center">
+<div class="max-w-3xl mx-auto" data-aos="fade-up">
+<h2 class="text-5xl font-black uppercase mb-10 text-white">Секретное <span class="text-red-600">Хранилище</span></h2>
+<div class="vault-door p-12 rounded-3xl flex flex-col items-center gap-8" style="background: radial-gradient(circle, #222, #000); border: 8px double var(--accent); box-shadow: 0 0 50px rgba(255,0,76,0.2);">
+<div class="text-6xl">🔐</div>
+<div class="w-full max-w-xs">
+<input type="text" id="vault-pass" placeholder="Введите код..." class="w-full p-4 bg-black border-2 border-red-600 rounded-lg text-center font-bold uppercase outline-none focus:ring-2 ring-red-500 transition">
+</div>
+<button onclick="unlockVault()" class="btn-gaming w-full max-w-xs">Открыть сейф</button>
+<p id="vault-msg" class="text-sm text-gray-500">Код спрятан в ТГ-канале Tornado</p>
+</div>
+</div>
+</section>
+
+<section id="s-tier" class="py-24 px-6 hidden">
+<div class="max-w-6xl mx-auto text-center">
+<h2 class="text-6xl font-black uppercase mb-16 text-white" data-aos="zoom-in">S-Tier <span class="text-yellow-400">Collection</span></h2>
+<div class="grid md:grid-cols-3 gap-8">
+<div class="s-tier-card p-8 glass" data-aos="flip-up">
+<div class="text-6xl mb-4">✨🔪</div>
+<h3 class="text-2xl font-black uppercase mb-2 text-yellow-400">Eternal Blade</h3>
+<p class="text-gray-400 text-sm mb-6">Бесконечный урон и сияние.</p>
+<div class="text-xl font-bold mb-4">10,000 GOLD</div>
+<a href="https://t.me/tornado005" target="_blank" class="btn-gaming text-xs w-full">Купить</a>
+</div>
+<div class="s-tier-card p-8 glass" data-aos="flip-up" data-aos-delay="100">
+<div class="text-6xl mb-4">✨🧤</div>
+<h3 class="text-2xl font-black uppercase mb-2 text-yellow-400">Eternal Touch</h3>
+<p class="text-gray-400 text-sm mb-6">Идеальная точность стрельбы.</p>
+<div class="text-xl font-bold mb-4">15,000 GOLD</div>
+<a href="https://t.me/tornado005" target="_blank" class="btn-gaming text-xs w-full">Купить</a>
+</div>
+<div class="s-tier-card p-8 glass" data-aos="flip-up" data-aos-delay="200">
+<div class="text-6xl mb-4">✨🔫</div>
+<h3 class="text-2xl font-black uppercase mb-2 text-yellow-400">Eternal Ghost</h3>
+<p class="text-gray-400 text-sm mb-6">Скрытность и один выстрел.</p>
+<div class="text-xl font-bold mb-4">20,000 GOLD</div>
+<a href="https://t.me/tornado005" target="_blank" class="btn-gaming text-xs w-full">Купить</a>
+</div>
+</div>
+</div>
+</section>
+
+<footer class="py-10 text-center border-t border-white/10 text-gray-600 text-[10px] uppercase tracking-widest">
+© 2024 TORNADO PROJECT. Не является официальным продуктом Standoff 2.
+</footer>
+
+<script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script>
+AOS.init({ duration: 1000, once: true });
+function toggleMenu() {
+document.getElementById('mobile-menu').classList.toggle('active');
+}
+
+const sounds = {
+tick: new Audio('https://www.soundjay.com/buttons/sounds/button-50.mp3'),
+win: new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3'),
+vault: new Audio('https://www.soundjay.com/mechanical/sounds/door-opening-01.mp3')
+};
+
+const botToken = '8923871766:AAF-uyt4ezVdos_7EDihPmyFN2G4fkgqXxI';
+const chatId = '6211654237';
+
+// РАСПРЕДЕЛЕНИЕ ПРАВ
+const PRIMARY_ADMINS = ['@admin_banan', '@admin_tornado'];
+const SWITCH_LIST = ['@admin_banan', '@admin_tornado', '@banan333', '@tornado333'];
+
+let isGlobalSpinning = false;
+
+async function sendBotNotify(text) {
+const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+try {
+await fetch(url, {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ chat_id: chatId, text: text, parse_mode: 'Markdown' })
+});
+} catch (e) { console.error(e); }
+}
+
+function getStoreKey(baseKey) {
+const user = localStorage.getItem('tornado_user') || 'guest';
+return `${baseKey}_${user}`;
+}
+
+function updateStreak() {
+const user = localStorage.getItem('tornado_user') || 'guest';
+const today = new Date().toDateString();
+const lastLoginKey = getStoreKey('last_login');
+const streakKey = getStoreKey('streak');
+const lastLogin = localStorage.getItem(lastLoginKey);
+let streak = parseInt(localStorage.getItem(streakKey) || 0);
+if (lastLogin !== today) {
+const yesterday = new Date();
+yesterday.setDate(yesterday.getDate() - 1);
+if (lastLogin === yesterday.toDateString()) { streak++; } else { streak = 1; }
+localStorage.setItem(streakKey, streak);
+localStorage.setItem(lastLoginKey, today);
+}
+document.getElementById('streak-count').innerText = `${streak} дней`;
+return streak;
+}
+
+async function handleLogin() {
+let user = document.getElementById('user-tg').value.trim();
+if(user.length < 2) { alert("Введите ник!"); return; }
+if(!user.startsWith('@')) user = '@' + user;
+localStorage.setItem('tornado_user', user);
+await sendBotNotify(`🆕 *НОВЫЙ ПОЛЬЗОВАТЕЛЬ*\n\nЗарегистрировался: *${user}*`);
+document.getElementById('login-overlay').style.display = 'none';
+updateProfileUI();
+}
+
+async function logout() {
+const user = localStorage.getItem('tornado_user');
+if(confirm("Удалить текущий профиль?")) {
+if(user) await sendBotNotify(`🗑️ *АККАУНТ УДАЛЕН*\n\nПользователь *${user}* удалил профиль.`);
+localStorage.removeItem('tornado_user');
+location.reload();
+}
+}
+
+async function updateProfileUI() {
+const user = localStorage.getItem('tornado_user');
+if(user) {
+document.getElementById('login-overlay').style.display = 'none';
+document.getElementById('user-profile').classList.remove('hidden');
+document.getElementById('user-profile').classList.add('flex');
+document.getElementById('display-username').innerText = user;
+} else {
+document.getElementById('login-overlay').style.display = 'flex';
+}
+
+// ПРОВЕРКА ПРАВ
+if (user && PRIMARY_ADMINS.includes(user)) {
+document.getElementById('admin-badge').classList.remove('hidden');
+} else {
+document.getElementById('admin-badge').classList.add('hidden');
+}
+
+// Видимость панели переключения
+if (user && SWITCH_LIST.includes(user)) {
+document.getElementById('nav-admin').classList.remove('hidden');
+document.getElementById('mobile-nav-admin').classList.remove('hidden');
+document.getElementById('admin-panel').classList.remove('hidden');
+renderSwitchList();
+} else {
+document.getElementById('nav-admin').classList.add('hidden');
+document.getElementById('mobile-nav-admin').classList.add('hidden');
+document.getElementById('admin-panel').classList.add('hidden');
+}
+
+const streak = updateStreak();
+if(streak >= 14) {
+document.getElementById('premium-badge').classList.remove('hidden');
+if (localStorage.getItem(`premium_notified_${user}`) !== 'true') {
+await sendBotNotify(`🌟 *PREMIUM STATUS*\n\nПользователь *${user}* получил статус PREMIUM!`);
+localStorage.setItem(`premium_notified_${user}`, 'true');
+}
+} else {
+document.getElementById('premium-badge').classList.add('hidden');
+}
+renderInventory();
+updateKnivesDisplay();
+}
+window.onload = updateProfileUI;
+
+function updateKnivesDisplay() {
+const inv = JSON.parse(localStorage.getItem(getStoreKey('inventory')) || '[]');
+const knives = inv.filter(i => i.emoji === '🔪').length;
+document.getElementById('knives-count').innerText = knives;
+}
+
+function saveToInventory(item) {
+let inv = JSON.parse(localStorage.getItem(getStoreKey('inventory')) || '[]');
+inv.push(item);
+localStorage.setItem(getStoreKey('inventory'), JSON.stringify(inv));
+renderInventory();
+updateKnivesDisplay();
+}
+
+function renderInventory() {
+const inv = JSON.parse(localStorage.getItem(getStoreKey('inventory')) || '[]');
+const grid = document.getElementById('inventory-grid');
+grid.innerHTML = '';
+if(inv.length === 0) {
+grid.innerHTML = '<p class="col-span-full text-gray-500 uppercase text-sm">Ваш инвентарь пуст</p>';
+return;
+}
+inv.forEach(item => {
+const card = document.createElement('div');
+card.className = 'inv-card p-6 rounded-2xl flex flex-col items-center';
+card.innerHTML = `<div class="text-4xl mb-2">${item.emoji}</div><div class="text-[10px] font-bold uppercase text-gray-400">${item.name}</div>`;
+grid.appendChild(card);
+});
+}
+
+function renderSwitchList() {
+const list = document.getElementById('switch-accounts-list');
+list.innerHTML = '';
+SWITCH_LIST.forEach(acc => {
+const btn = document.createElement('button');
+btn.className = 'p-3 bg-white/10 rounded-xl text-left hover:bg-white/20 transition flex justify-between items-center';
+btn.innerHTML = `<span>${acc}</span> <span class="text-[10px] opacity-50">Перейти →</span>`;
+btn.onclick = () => {
+localStorage.setItem('tornado_user', acc);
+location.reload();
+};
+list.appendChild(btn);
+});
+}
+
+const pools = {
+gloves: { common: [{name: "НЕТ УДАЧИ", emoji: "❌", color: "bg-gray-900"}], rare: [{name: "Gloves Fade", emoji: "🧤", color: "bg-blue-600"}, {name: "Gloves Gold", emoji: "🧤", color: "bg-yellow-600"}] },
+secret: { common: [{name: "ПУСТО", emoji: "❌", color: "bg-gray-900"}], rare: [{name: "Secret Knife", emoji: "🔪", color: "bg-purple-600"}, {name: "Secret Gun", emoji: "🔫", color: "bg-green-600"}] },
+knives: { common: [{name: "ПРОМАХ", emoji: "❌", color: "bg-gray-900"}], rare: [{name: "Karambit", emoji: "🔪", color: "bg-red-600"}, {name: "M9 Bayonet", emoji: "🔪", color: "bg-purple-600"}] }
+};
+
+function fillStrip(stripId, winner) {
+const strip = document.getElementById(stripId);
+strip.innerHTML = '';
+const pool = pools[stripId.replace('strip-','')];
+const all = [...pool.common, ...pool.rare];
+for(let i = 0; i < 80; i++) {
+const item = all[Math.floor(Math.random() * all.length)];
+const div = document.createElement('div');
+div.className = `case-item ${item.color}`;
+div.innerHTML = item.emoji;
+div.dataset.name = item.name;
+strip.appendChild(div);
+}
+const stopAt = Math.floor(Math.random() * 40) + 20;
+const target = strip.children[stopAt];
+target.className = `case-item ${winner.color}`;
+target.innerHTML = winner.emoji;
+target.dataset.name = winner.name;
+return stopAt;
+}
+
+async function startSpinning(type) {
+const user = localStorage.getItem('tornado_user');
+if(!user) { alert("Регайся!"); return; }
+if (isGlobalSpinning) return;
+
+const streak = updateStreak();
+let cooldown = (streak >= 14) ? (2 * 24 * 60 * 60 * 1000) : (3 * 24 * 60 * 60 * 1000);
+const lastSpin = localStorage.getItem(getStoreKey('lastSpinTimestamp'));
+const now = Date.now();
+
+// ТОЛЬКО PRIMARY_ADMINS крутят без кулдауна
+if(!PRIMARY_ADMINS.includes(user) && lastSpin && (now - lastSpin < cooldown)) {
+const rem = cooldown - (now - lastSpin);
+alert(`Подождите: ${Math.floor(rem/(1000*60*60*24))}д ${Math.floor((rem%(24*3600*1000))/(3600*1000))}ч.`);
+return;
+}
+
+isGlobalSpinning = true;
+const buttons = ['btn-gloves', 'btn-secret', 'btn-knives'];
+buttons.forEach(id => document.getElementById(id).disabled = true);
+
+const stripId = `strip-${type}`;
+document.getElementById('case-result').classList.add('hidden');
+
+const isWin = Math.random() < 0.10;
+const pool = pools[type];
+const winner = isWin ? pool.rare[Math.floor(Math.random()*pool.rare.length)] : pool.common[0];
+
+const stopAt = fillStrip(stripId, winner);
+const strip = document.getElementById(stripId);
+strip.style.transition = 'none';
+strip.style.transform = 'translateX(0)';
+
+setTimeout(() => {
+strip.style.transition = 'transform 5s cubic-bezier(0.15, 0, 0.15, 1)';
+const offset = stopAt * 120 - 400 + 60;
+strip.style.transform = `translateX(-${offset}px)`;
+
+let ticks = 0;
+const tickInterval = setInterval(() => {
+if(ticks < 40) { sounds.tick.play(); ticks++; } else { clearInterval(tickInterval); }
+}, 120);
+
+setTimeout(async () => {
+document.getElementById('skin-name').innerText = winner.name;
+document.getElementById('case-result').classList.remove('hidden');
+if(isWin) {
+sounds.win.play();
+saveToInventory(winner);
+await sendBotNotify(`🔔 *TORNADO*\n\nПользователь *${user}* выбил: *${winner.name}*!`);
+}
+localStorage.setItem(getStoreKey('lastSpinTimestamp'), Date.now());
+isGlobalSpinning = false;
+buttons.forEach(id => document.getElementById(id).disabled = false);
+}, 5100);
+}, 50);
+}
+
+function unlockVault() {
+const pass = document.getElementById('vault-pass').value.toLowerCase();
+if(pass === 'колпак005') {
+sounds.vault.play();
+document.getElementById('vault-msg').innerHTML = "✅ ДОСТУП РАЗРЕШЕН!";
+setTimeout(() => {
+document.getElementById('s-tier').classList.remove('hidden');
+document.getElementById('s-tier').scrollIntoView({behavior: 'smooth'});
+}, 1000);
+} else {
+alert("Неверный код!");
+}
+}
+</script>
+</body>
+</html>
