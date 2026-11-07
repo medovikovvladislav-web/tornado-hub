@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-UTF-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TORNADO | Cloud Final</title>
 <script src="https://cdn.tailwindcss.com"></script>
@@ -313,8 +313,7 @@ async function handleLogin() {
 let user = document.getElementById('user-tg').value.trim();
 if(user.length < 2) { alert("Введите ник!"); return; }
 if(!user.startsWith('@')) user = '@' + user;
-localStorage.setItem('tornado_//user', user); // Исправлено: было tornado_//user
-localStorage.setItem('tornado_user', user);
+localStorage.setItem('tornado_user', user); 
 await sendBotNotify(`🆕 *НОВЫЙ ПОЛЬЗОВАТЕЛЬ*\n\nЗарегистрировался: *${user}*`);
 document.getElementById('login-overlay').style.display = 'none';
 updateProfileUI();
@@ -337,10 +336,8 @@ document.getElementById('user-profile').classList.remove('hidden');
 document.getElementById('user-profile').classList.add('flex');
 document.getElementById('display-username').innerText = user;
 } else {
-document.getElementById('login-//overlay').style.display = 'flex'; // ОШИБКА ТУТ, исправляю ниже
+document.getElementById('login-overlay').style.display = 'flex';
 }
-// Исправленная строка:
-if(!user) { document.getElementById('login-overlay').style.display = 'flex'; }
 
 if (user && PRIMARY_ADMINS.includes(user)) {
 document.getElementById('admin-badge').classList.remove('hidden');
@@ -370,14 +367,13 @@ localStorage.setItem(`premium_notified_${user}`, 'true');
 document.getElementById('premium-badge').classList.add('hidden');
 }
 renderInventory();
-updateKnivesDisplay();
+updateGoldUI();
 }
-window.onload = updateProfileUI;
 
-function updateKnivesDisplay() {
-const inv = JSON.parse(localStorage.getItem(getStoreKey('inventory')) || '[]');
-const knives = inv.filter(i => i.emoji === '🔪').length;
-document.getElementById('knives-count').innerText = knives;
+function updateGoldUI() {
+const user = localStorage.getItem('tornado_user');
+const gold = localStorage.getItem(getStoreKey('balance')) || 0;
+document.getElementById('gold-count').innerText = gold;
 }
 
 function saveToInventory(item) {
@@ -385,7 +381,6 @@ let inv = JSON.parse(localStorage.getItem(getStoreKey('inventory')) || '[]');
 inv.push(item);
 localStorage.setItem(getStoreKey('inventory'), JSON.stringify(inv));
 renderInventory();
-updateKnivesDisplay();
 }
 
 function renderInventory() {
@@ -416,6 +411,7 @@ list.appendChild(btn);
 });
 }
 
+// ФУНКЦИЯ ПОКУПКИ
 async function openTopUp(amount) {
 const user = localStorage.getItem('tornado_user');
 if(!user) { alert("Сначала зарегистрируйся!"); return; }
@@ -424,13 +420,30 @@ if(PRIMARY_ADMINS.includes(user)) {
 let currentGold = parseInt(localStorage.getItem(getStoreKey('balance')) || 0);
 let newGold = currentGold + amount;
 localStorage.setItem(getStoreKey('balance'), newGold);
-document.getElementById('gold-count').innerText = newGold;
+updateGoldUI();
 alert(`🚀 АДМИН-БОНУС!\n\nВам зачислено ${amount} голды бесплатно!`);
 return;
 }
 
-const botUsername = 'ТВОЙ_НИК_БОТА'; 
+const botUsername = 'TornadoGoldBot'; // ТВОЙ БОТ
 window.location.href = `https://t.me/${botUsername}?start=buy_${amount}_${user.substring(1)}`;
+}
+
+// ФУНКЦИЯ ПРИЕМА ОПЛАТЫ
+function checkPaymentFromUrl() {
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.has('payment') && urlParams.get('payment') === 'success') {
+const amount = parseInt(urlParams.get('amount') || 0);
+const user = localStorage.getItem('tornado_user');
+if (user && amount > 0) {
+let currentGold = parseInt(localStorage.getItem(getStoreKey('balance')) || 0);
+let newGold = currentGold + amount;
+localStorage.setItem(getStoreKey('balance'), newGold);
+window.history.replaceState({}, document.title, window.location.pathname);
+alert(`✅ Оплата прошла успешно! Вам зачислено ${amount} GOLD.`);
+updateGoldUI();
+}
+}
 }
 
 const pools = {
@@ -530,6 +543,12 @@ document.getElementById('s-tier').scrollIntoView({behavior: 'smooth'});
 alert("Неверный код!");
 }
 }
+
+// ГЛАВНЫЙ ЗАПУСК
+window.onload = () => {
+checkPaymentFromUrl(); 
+updateProfileUI();
+};
 </script>
 </body>
 </html>
