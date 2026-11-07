@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TORNADO | Ultimate Cloud Edition</title>
+<title>TORNADO | Cloud Final</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=Montserrat:wght@400;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
@@ -13,12 +13,11 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
 <style>
-:root { --accent: #ff004c; --gold: #ffd700; --bg-dark: #050507; --glass: rgba(20, 20, 25, 0.8); }
-body { font-family: 'Montserrat', sans-serif; background-color: #050507 !important; color: white !important; overflow-x: hidden; }
+body { font-family: 'Montserrat', sans-serif; background-color: #050507 !important; color: white !important; overflow-x: hidden; margin: 0; }
 h1, h2, h3, .gaming-font { font-family: 'Rajdhani', sans-serif; }
 .neon-text { background: linear-gradient(90deg, #fff, #ff004c, #fff); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: shine 3s linear infinite; }
 @keyframes shine { to { background-position: 200% center; } }
-.btn-gaming { position: relative; background: #ff004c; color: white; font-weight: 900; text-transform: uppercase; transition: all 0.3s ease; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%); padding: 10px 30px; display: inline-block; text-align: center; cursor: pointer; }
+.btn-gaming { position: relative; background: #ff004c; color: white; font-weight: 900; text-transform: uppercase; transition: all 0.3s ease; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%); padding: 10px 30px; display: inline-block; text-align: center; cursor: pointer; border: none; }
 .btn-gaming:hover { transform: scale(1.05); box-shadow: 0 0 20px #ff004c; filter: brightness(1.2); }
 .btn-gaming:disabled { background: #444; cursor: not-allowed; transform: none; box-shadow: none; }
 .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; }
@@ -111,7 +110,6 @@ html { scroll-behavior: smooth; }
 </div>
 </section>
 
-<!-- МАГАЗИН ГОЛДЫ -->
 <section id="shop" class="py-24 px-6 bg-white/5">
 <div class="max-w-6xl mx-auto text-center">
 <h2 class="text-5xl font-black uppercase mb-16 text-white" data-aos="fade-up">Магазин <span class="text-yellow-400">Голды</span></h2>
@@ -153,7 +151,7 @@ html { scroll-behavior: smooth; }
 </div>
 </section>
 
-<section id="about" class="py-24 px-6 max-w-6xl mx-//auto">
+<section id="about" class="py-24 px-6 max-w-6xl mx-auto">
 <div class="grid md:grid-cols-2 gap-12 items-center">
 <div data-aos="fade-right">
 <h2 class="text-5xl font-black uppercase mb-6 text-white">Кто такой <span class="text-red-600">Tornado?</span></h2>
@@ -255,7 +253,7 @@ Tornado — основатель крупнейшего сообщества п�
 <h3 class="text-2xl font-black uppercase mb-2 text-yellow-400">Eternal Ghost</h3>
 <p class="text-gray-400 text-sm mb-6">Скрытность и один выстрел.</p>
 <div class="text-xl font-bold mb-4">20,000 GOLD</div>
-<a href="https://t.me/tornado005" target="_blank" class="btn-gaming text-xs w-//full">Купить</a>
+<a href="https://t.me/tornado005" target="_blank" class="btn-gaming text-xs w-full">Купить</a>
 </div>
 </div>
 </div>
@@ -315,6 +313,7 @@ async function handleLogin() {
 let user = document.getElementById('user-tg').value.trim();
 if(user.length < 2) { alert("Введите ник!"); return; }
 if(!user.startsWith('@')) user = '@' + user;
+localStorage.setItem('tornado_//user', user); // Исправлено: было tornado_//user
 localStorage.setItem('tornado_user', user);
 await sendBotNotify(`🆕 *НОВЫЙ ПОЛЬЗОВАТЕЛЬ*\n\nЗарегистрировался: *${user}*`);
 document.getElementById('login-overlay').style.display = 'none';
@@ -333,13 +332,15 @@ location.reload();
 async function updateProfileUI() {
 const user = localStorage.getItem('tornado_user');
 if(user) {
-document.getElementById('login-overlay').style.//display = 'none';
+document.getElementById('login-overlay').style.display = 'none';
 document.getElementById('user-profile').classList.remove('hidden');
 document.getElementById('user-profile').classList.add('flex');
 document.getElementById('display-username').innerText = user;
 } else {
-document.getElementById('login-overlay').style.display = 'flex';
+document.getElementById('login-//overlay').style.display = 'flex'; // ОШИБКА ТУТ, исправляю ниже
 }
+// Исправленная строка:
+if(!user) { document.getElementById('login-overlay').style.display = 'flex'; }
 
 if (user && PRIMARY_ADMINS.includes(user)) {
 document.getElementById('admin-badge').classList.remove('hidden');
@@ -415,9 +416,8 @@ list.appendChild(btn);
 });
 }
 
-// --- ЛОГИКА МАГАЗИНА ---
 async function openTopUp(amount) {
-const user = localStorage.getItem('tornado_//user');
+const user = localStorage.getItem('tornado_user');
 if(!user) { alert("Сначала зарегистрируйся!"); return; }
 
 if(PRIMARY_ADMINS.includes(user)) {
